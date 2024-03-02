@@ -22,10 +22,15 @@ def print_colored(text, color, end="\n"):
 
 def set_display(nircmd_path):
     """Set the display resolution and refresh rate using nircmd."""
-    command = f"{nircmd_path} setdisplay {WIDTH} {HEIGHT} {COLOR_DEPTH} {REFRESH_RATE}"
+
+    display_str = f"{WIDTH} {HEIGHT} {COLOR_DEPTH} {REFRESH_RATE}"
+    command = f"{nircmd_path} setdisplay {display_str}"
+
     print_colored("Setting resolution to 4k120... ", "cyan", end="")
+
     subprocess.run(command, shell=True, check=True)
-    print_colored("Done!", "green")
+
+    print_colored("done!", "green")
 
 
 def main():
