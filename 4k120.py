@@ -1,5 +1,3 @@
-# pylint: disable=invalid-name
-
 import subprocess
 
 # Specify the resolution, color depth, and refresh rate

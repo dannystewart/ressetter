@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[tool.pylint]
+disable = "invalid-name"
 
 [build-system]
 requires = ["poetry-core"]
