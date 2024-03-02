@@ -6,8 +6,11 @@ authors = ["Danny Stewart <danny@stewart.cc>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.13"
 termcolor = "^2.4.0"
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.4.0"
 
 [tool.pylint]
 disable = "invalid-name"
