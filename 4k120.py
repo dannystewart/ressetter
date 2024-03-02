@@ -15,6 +15,7 @@ def print_colored(text, color, end="\n"):
         from termcolor import colored
     except ImportError:
         print(text)
+        return
 
     print(colored(text, color), end=end)
 
@@ -32,9 +33,7 @@ def set_display(nircmd_path):
     command = f"{nircmd_path} setdisplay {display_str}"
 
     print_colored("Setting resolution to 4k120... ", "cyan", end="")
-
     subprocess.run(command, shell=True, check=True)
-
     print_colored("done!", "green")
 
 
