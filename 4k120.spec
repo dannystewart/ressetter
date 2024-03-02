@@ -4,7 +4,7 @@
 a = Analysis(
     ["4k120.py"],
     pathex=[],
-    binaries=[],
+    binaries=[("C:/Windows/nircmd.exe", ".")],
     datas=[],
     hiddenimports=[],
     hookspath=[],
@@ -30,6 +30,7 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=False,
+    onefile=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
