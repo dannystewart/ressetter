@@ -1,47 +1,55 @@
-import os
-import subprocess
-import sys
+"""
+Script to set the display resolution and refresh rate for the primary display to 4K @ 120 Hz.
+"""
 
-# Specify the resolution, color depth, and refresh rate
+import win32api
+import win32con
+
+# Values for 4K @ 120 Hz
 WIDTH = 3840
 HEIGHT = 2160
-COLOR_DEPTH = 32
 REFRESH_RATE = 120
 
 
-def print_colored(text, color, end="\n"):
-    """Print text in the specified color."""
+def set_display(width=WIDTH, height=HEIGHT, refresh_rate=REFRESH_RATE):
+    """
+    Set the display resolution and refresh rate for the primary display.
+
+    Args:
+        width (int): The width of the display resolution. Default is 3840 for 4K.
+        height (int): The height of the display resolution. Default is 2160 for 4K.
+        refresh_rate (int): The refresh rate to set. Default is 120 Hz.
+
+    Returns:
+        bool: True if the display settings were set successfully, False otherwise.
+    """
+    devmode = win32api.EnumDisplaySettings(None, win32con.ENUM_CURRENT_SETTINGS)
+
+    if (  # Check if the current settings already match the desired settings
+        devmode.PelsWidth == width
+        and devmode.PelsHeight == height
+        and devmode.DisplayFrequency == refresh_rate
+    ):
+        print(f"Display is already set to {width}x{height} and {refresh_rate} Hz.")
+        return True
+
+    devmode.PelsWidth = width
+    devmode.PelsHeight = height
+    devmode.DisplayFrequency = refresh_rate
+
     try:
-        from termcolor import colored
-    except ImportError:
-        print(text)
-        return
-
-    print(colored(text, color), end=end)
-
-
-def get_resource_path(relative_path):
-    """Get the absolute path to a resource in a PyInstaller bundle."""
-    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
-
-
-def set_display(nircmd_path):
-    """Set the display resolution and refresh rate using nircmd."""
-
-    display_str = f"{WIDTH} {HEIGHT} {COLOR_DEPTH} {REFRESH_RATE}"
-    command = f"{nircmd_path} setdisplay {display_str}"
-
-    print_colored("Setting resolution to 4k120... ", "cyan", end="")
-    subprocess.run(command, shell=True, check=True)
-    print_colored("done!", "green")
-
-
-def main():
-    """Main function."""
-    nircmd_path = get_resource_path("nircmd.exe")
-    set_display(nircmd_path)
+        change_result = win32api.ChangeDisplaySettings(devmode, 0)
+        if change_result == win32con.DISP_CHANGE_SUCCESSFUL:
+            print(
+                f"Display set to {width}x{height} and {refresh_rate} Hz successfully."
+            )
+            return True
+        print(f"Changing display settings failed with result {change_result}.")
+        return False
+    except Exception as e:
+        print(f"Exception occurred: {e}")
+        return False
 
 
 if __name__ == "__main__":
-    main()
+    set_display()

@@ -7,6 +7,9 @@
 	"settings": {
 		"ruff.format.args": [
 			"--config=pyproject.toml"
-		]
+		],
+		"pylint.args": [
+			"--rcfile=pyproject.toml"
+		],
 	}
 }

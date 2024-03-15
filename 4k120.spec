@@ -4,7 +4,7 @@
 a = Analysis(
     ["4k120.py"],
     pathex=[],
-    binaries=[("C:/Windows/nircmd.exe", ".")],
+    binaries=[],
     datas=[],
     hiddenimports=[],
     hookspath=[],

@@ -1,19 +1,19 @@
 [tool.poetry]
 name = "4k120"
-version = "0.1.1"
-description = "Set resolution and refresh rate to 4K@120Hz"
+version = "0.2.0"
+description = "Set resolution and refresh rate to 4K @ 120Hz"
 authors = ["Danny Stewart <danny@stewart.cc>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-termcolor = "^2.4.0"
+pywin32 = "^306"
 
 [tool.poetry.group.dev.dependencies]
 pyinstaller = "^6.4.0"
 
 [tool.pylint]
-disable = "invalid-name"
+disable = ["invalid-name", "c-extension-no-member", "broad-exception-caught"]
 
 [build-system]
 requires = ["poetry-core"]
