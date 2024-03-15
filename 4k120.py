@@ -55,13 +55,11 @@ def already_set_correctly(devmode, width, height, refresh_rate):
     Returns:
         bool: True if the display settings match the desired settings, False otherwise.
     """
-
-    already_set = (
+    if (
         devmode.PelsWidth == width
         and devmode.PelsHeight == height
         and devmode.DisplayFrequency == refresh_rate
-    )
-    if already_set:
+    ):
         print(f"Display is already set to {width}x{height} at {refresh_rate} Hz.")
         return True
     return False
