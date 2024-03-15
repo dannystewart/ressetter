@@ -13,7 +13,12 @@ pywin32 = "^306"
 pyinstaller = "^6.4.0"
 
 [tool.pylint]
-disable = ["invalid-name", "c-extension-no-member", "broad-exception-caught"]
+disable = [
+    "broad-exception-caught",
+    "c-extension-no-member",
+    "import-error",
+    "invalid-name",
+]
 
 [build-system]
 requires = ["poetry-core"]
