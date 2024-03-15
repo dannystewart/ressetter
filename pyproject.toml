@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "4k120"
-version = "0.2.0"
+version = "0.2.1"
 description = "Set resolution and refresh rate to 4K @ 120Hz"
 authors = ["Danny Stewart <danny@stewart.cc>"]
 readme = "README.md"
