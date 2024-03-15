@@ -18,6 +18,7 @@ disable = [
     "c-extension-no-member",
     "import-error",
     "invalid-name",
+    "line-too-long",
 ]
 
 [build-system]
