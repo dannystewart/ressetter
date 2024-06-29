@@ -1,10 +1,8 @@
-"""
-Script to set the display resolution and refresh rate for the primary display to 4K @ 120 Hz.
-"""
+"""Script to set the display resolution and refresh rate for the primary display to 4K @ 120 Hz."""
 
 import argparse
 
-from display import DisplaySettings
+from display_settings import DisplaySettings
 
 # Set default values (4K @ 120 Hz)
 WIDTH = 3840
@@ -14,9 +12,7 @@ REFRESH_RATE = 120
 
 def parse_args():
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Set display resolution and refresh rate."
-    )
+    parser = argparse.ArgumentParser(description="Set display resolution and refresh rate.")
     parser.add_argument(
         "-w",
         "--width",

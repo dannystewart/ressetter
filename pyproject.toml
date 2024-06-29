@@ -11,6 +11,8 @@ pywin32 = "^306"
 
 [tool.poetry.group.dev.dependencies]
 pyinstaller = "^6.4.0"
+mypy = "^1.10.1"
+ruff = "^0.5.0"
 
 [tool.pylint]
 disable = [
@@ -24,3 +26,61 @@ disable = [
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.11"
+disallow_untyped_defs = false
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pyenv",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["ARG", "B", "C", "D", "E", "F", "N", "Q", "T", "UP", "W"]
+ignore = [
+    "B010",
+    "D100",
+    "D104",
+    "D107",
+    "D201",
+    "D202",
+    "D203",
+    "D204",
+    "D205",
+    "D206",
+    "D212",
+    "D400",
+    "D406",
+    "D407",
+    "D413",
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
