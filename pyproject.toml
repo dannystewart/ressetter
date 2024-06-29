@@ -10,7 +10,7 @@ python = ">=3.12,<3.13"
 pywin32 = "^306"
 
 [tool.poetry.group.dev.dependencies]
-pyinstaller = "^6.4.0"
+pyinstaller = "^6.8.0"
 mypy = "^1.10.1"
 ruff = "^0.5.0"
 
