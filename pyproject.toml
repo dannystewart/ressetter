@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
+pynput = "^1.7.7"
 pywin32 = "^306"
 
 [tool.poetry.group.dev.dependencies]

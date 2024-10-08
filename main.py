@@ -1,14 +1,19 @@
 """Script to set the display resolution and refresh rate for the primary display to 4K @ 120 Hz."""
 
 import argparse
+import threading
+import time
+from typing import Any
 
 import win32api  # type: ignore
 import win32con  # type: ignore
+from pynput import keyboard, mouse
 
 # Set default values (4K @ 120 Hz)
 WIDTH = 3840
 HEIGHT = 2160
 REFRESH_RATE = 120
+INACTIVITY_TIMEOUT_MINUTES = 10
 
 
 class DisplaySettings:
@@ -19,7 +24,7 @@ class DisplaySettings:
         width: The width of the display resolution. Default is 3840 for 4K.
         height: The height of the display resolution. Default is 2160 for 4K.
         refresh_rate: The refresh rate to check. Default is 120 Hz.
-        devmode (pywintypes.DEVMODEType): The current display settings.
+        devmode: The current display settings.
     """
 
     def __init__(self, width: int, height: int, refresh_rate: int):
@@ -67,8 +72,54 @@ class DisplaySettings:
             return False
 
 
+class InputMonitor:
+    """Monitor for keyboard and mouse input to set display settings after a period of inactivity."""
+
+    def __init__(self, display_settings: DisplaySettings, timeout_minutes: int):
+        self.display_settings = display_settings
+        self.timeout_seconds = timeout_minutes * 60
+        self.last_activity_time = time.time()
+        self.timer: threading.Timer | None = None
+        self.keyboard_listener = keyboard.Listener(on_press=self.on_activity)
+        self.mouse_listener = mouse.Listener(on_move=self.on_activity, on_click=self.on_activity)
+
+    def start(self) -> None:
+        """Start monitoring for keyboard and mouse input."""
+        self.keyboard_listener.start()
+        self.mouse_listener.start()
+        self.reset_timer()
+
+    def stop(self) -> None:
+        """Stop monitoring for keyboard and mouse input."""
+        self.keyboard_listener.stop()
+        self.mouse_listener.stop()
+        if self.timer:
+            self.timer.cancel()
+
+    def on_activity(self, *args: Any) -> None:  # noqa: ARG002
+        """Reset the inactivity timer when keyboard or mouse activity is detected."""
+        current_time = time.time()
+        if current_time - self.last_activity_time >= self.timeout_seconds:
+            self.display_settings.set_display_settings()
+        self.last_activity_time = current_time
+        self.reset_timer()
+
+    def reset_timer(self) -> None:
+        """Reset the inactivity timer."""
+        if self.timer:
+            self.timer.cancel()
+        self.timer = threading.Timer(self.timeout_seconds, self.on_inactivity)
+        self.timer.start()
+
+    def on_inactivity(self) -> None:
+        """Print a message when inactivity is detected."""
+        print("Inactivity detected. Waiting for next input to set display settings.")
+
+
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
+    timeout_desc = f"Inactivity timeout in minutes (default: {INACTIVITY_TIMEOUT_MINUTES})"
+
     parser = argparse.ArgumentParser(description="Set display resolution and refresh rate.")
     parser.add_argument(
         "-w",
@@ -91,6 +142,19 @@ def parse_args() -> argparse.Namespace:
         default=REFRESH_RATE,
         help="Refresh rate of the display (default: 120 Hz)",
     )
+    parser.add_argument(
+        "-b",
+        "--background",
+        action="store_true",
+        help="Run in background mode, monitoring for inactivity",
+    )
+    parser.add_argument(
+        "-t",
+        "--timeout",
+        type=int,
+        default=INACTIVITY_TIMEOUT_MINUTES,
+        help=timeout_desc,
+    )
     return parser.parse_args()
 
 
@@ -102,7 +166,21 @@ def main() -> None:
     args = parse_args()
     display = DisplaySettings(args.width, args.height, args.refresh)
 
-    if not display.already_set_correctly():
+    if args.background:
+        monitor = InputMonitor(display, args.timeout)
+        try:
+            monitor.start()
+            print(
+                "Running in background mode. Monitoring input. "
+                f"Will set display settings after {args.timeout} minutes of inactivity."
+            )
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Stopping input monitoring.")
+        finally:
+            monitor.stop()
+    elif not display.already_set_correctly():
         display.set_display_settings()
 
 
