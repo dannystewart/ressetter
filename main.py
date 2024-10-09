@@ -214,11 +214,12 @@ def main() -> None:
     Parse command-line arguments and instantiate DisplaySettings. Check to see if the current
     display settings match the desired settings. If not, set them.
     """
-    if already_running():
+    args = parse_args()
+
+    if args.background and already_running():
         show_message_box("An instance of this script is already running.", "4K120")
         sys.exit(0)
 
-    args = parse_args()
     display = DisplaySettings(args.width, args.height, args.refresh)
 
     if args.background:
