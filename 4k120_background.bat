@@ -1,1 +1,1 @@
-poetry run python main.py --background
+poetry run python 4k120.py --background

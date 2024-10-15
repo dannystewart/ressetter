@@ -3,7 +3,7 @@
 import sys
 
 a = Analysis(
-    ["main.py"],
+    ["4k120.py"],
     pathex=[],
     binaries=[],
     datas=[],
