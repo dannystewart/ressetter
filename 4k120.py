@@ -24,8 +24,9 @@ DEFAULT_CONFIG = {
         "refresh_rate": 120,
     },
     "input": {
-        "timeout_minutes": 5,
-        "retry_delay": 10,
+        "timeout": 300,
+        "delay_before_set": 5,
+        "delay_before_retry": 10,
         "max_retries": 3,
     },
 }
@@ -123,14 +124,20 @@ def parse_args(config: dict[str, Any]) -> argparse.Namespace:
     parser.add_argument(
         "--timeout",
         type=int,
-        default=config["input"]["timeout_minutes"],
-        help="Timeout in minutes for background mode",
+        default=config["input"]["timeout"],
+        help="Timeout in seconds for background mode (default: 300)",
+    )
+    parser.add_argument(
+        "--set-delay",
+        type=int,
+        default=config["input"]["delay_before_set"],
+        help="Seconds before attempting to set display settings",
     )
     parser.add_argument(
         "--retry-delay",
         type=int,
-        default=config["input"]["retry_delay"],
-        help="Delay between retries in seconds",
+        default=config["input"]["delay_before_retry"],
+        help="Seconds between retries",
     )
     parser.add_argument(
         "--max-retries",
@@ -143,15 +150,21 @@ def parse_args(config: dict[str, Any]) -> argparse.Namespace:
 
 
 def run_background_mode(
-    display: DisplaySettings, timeout: int, retry_delay: int, max_retries: int
+    display: DisplaySettings, timeout: int, set_delay: int, retry_delay: int, max_retries: int
 ) -> None:
     """Run the script in background mode, monitoring for inactivity to set display settings."""
-    monitor = InputMonitor(display, timeout, max_retries, retry_delay)
+    monitor = InputMonitor(display, timeout, set_delay, retry_delay, max_retries)
     try:
         monitor.start()
+        timeout_minutes = timeout // 60  # Convert seconds to minutes for display
         print(
-            "Running in background mode. Monitoring input. "
-            f"Will set display settings after {timeout} minutes of inactivity."
+            "Running in background mode, monitoring input. "
+            f"Will set display settings after {timeout_minutes} minute{'s' if timeout_minutes != 1 else ''} of inactivity."
+        )
+        print(
+            f"Delay before set after inactivity: {set_delay} second{'s' if set_delay != 1 else ''}, "
+            f"delay before retrying: {retry_delay} second{'s' if retry_delay != 1 else ''}, "
+            f"max retries: {max_retries}"
         )
         while True:
             time.sleep(1)
@@ -162,10 +175,7 @@ def run_background_mode(
 
 
 def main() -> None:
-    """
-    Parse command-line arguments and instantiate DisplaySettings. Check to see if the current
-    display settings match the desired settings. If not, set them.
-    """
+    """Set the display settings if needed, or run in background mode."""
     config = load_config()
     args = parse_args(config)
 
@@ -176,7 +186,9 @@ def main() -> None:
     display = DisplaySettings(args.width, args.height, args.refresh)
 
     if args.background:
-        run_background_mode(display, args.timeout, args.retry_delay, args.max_retries)
+        run_background_mode(
+            display, args.timeout, args.set_delay, args.retry_delay, args.max_retries
+        )
     elif not display.already_set_correctly():
         display.set_display_settings()
 

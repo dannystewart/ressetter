@@ -10,16 +10,24 @@ from display_settings import DisplaySettings
 class InputMonitor:
     """Monitor for keyboard and mouse input to set display settings after a period of inactivity."""
 
-    def __init__(self, display_settings: DisplaySettings, timeout_minutes: int, max_retries: int, retry_delay: int):
+    def __init__(
+        self,
+        display_settings: DisplaySettings,
+        timeout: int,
+        set_delay: int,
+        retry_delay: int,
+        max_retries: int,
+    ):
         self.display_settings = display_settings
-        self.timeout_seconds = timeout_minutes * 60
-        self.delay_before_set = 5  # Delay before setting after inactivity (seconds)
+        self.timeout = timeout  # Timeout in seconds
+        self.set_delay = set_delay  # Delay before setting display settings in seconds
+        self.retry_delay = retry_delay  # Delay between retries in seconds
+        self.max_retries = max_retries  # Maximum number of retries to set display settings
+
         self.last_activity_time = time.time()
         self.timer: threading.Timer | None = None
         self.keyboard_listener = keyboard.Listener(on_press=self.on_activity)
         self.mouse_listener = mouse.Listener(on_move=self.on_activity, on_click=self.on_activity)
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
 
     def start(self) -> None:
         """Start monitoring for keyboard and mouse input."""
@@ -37,8 +45,8 @@ class InputMonitor:
     def on_activity(self, *args: Any) -> None:  # noqa: ARG002
         """Reset the inactivity timer when keyboard or mouse activity is detected."""
         current_time = time.time()
-        if current_time - self.last_activity_time >= self.timeout_seconds:
-            self.attempt_display_settings_change()
+        if current_time - self.last_activity_time >= self.timeout:
+            threading.Timer(self.set_delay, self.attempt_display_settings_change).start()
         self.last_activity_time = current_time
         self.reset_timer()
 
@@ -46,7 +54,7 @@ class InputMonitor:
         """Reset the inactivity timer."""
         if self.timer:
             self.timer.cancel()
-        self.timer = threading.Timer(self.timeout_seconds, self.on_inactivity)
+        self.timer = threading.Timer(self.timeout, self.on_inactivity)
         self.timer.start()
 
     def on_inactivity(self) -> None:
