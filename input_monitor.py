@@ -10,7 +10,7 @@ from display_settings import DisplaySettings
 class InputMonitor:
     """Monitor for keyboard and mouse input to set display settings after a period of inactivity."""
 
-    def __init__(self, display_settings: DisplaySettings, timeout_minutes: int, max_retries: int = 3, retry_delay: int = 10):
+    def __init__(self, display_settings: DisplaySettings, timeout_minutes: int, max_retries: int, retry_delay: int):
         self.display_settings = display_settings
         self.timeout_seconds = timeout_minutes * 60
         self.delay_before_set = 5  # Delay before setting after inactivity (seconds)

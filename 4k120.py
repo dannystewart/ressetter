@@ -1,5 +1,7 @@
 """Script to set the display resolution and refresh rate for the primary display to 4K @ 120 Hz."""
 
+from __future__ import annotations
+
 import argparse
 import atexit
 import ctypes
@@ -7,17 +9,66 @@ import os
 import sys
 import tempfile
 import time
+from typing import Any
 
 import psutil
+import toml
 
 from display_settings import DisplaySettings
 from input_monitor import InputMonitor
 
-# Set default values (4K @ 120 Hz)
-WIDTH = 3840
-HEIGHT = 2160
-REFRESH_RATE = 120
-INACTIVITY_TIMEOUT_MINUTES = 10
+DEFAULT_CONFIG = {
+    "display": {
+        "width": 3840,
+        "height": 2160,
+        "refresh_rate": 120,
+    },
+    "input": {
+        "timeout_minutes": 5,
+        "retry_delay": 10,
+        "max_retries": 3,
+    },
+}
+
+
+def create_default_config(config_file: str) -> None:
+    """Create a default configuration file."""
+    try:
+        with open(config_file, "w") as f:
+            toml.dump(DEFAULT_CONFIG, f)
+    except Exception as e:
+        print(f"Error creating default config file: {e}")
+
+
+def load_config(config_file: str = "config.toml") -> dict[str, Any]:
+    """Load configuration from TOML file. Create default file if it doesn't exist."""
+    if not os.path.exists(config_file):
+        create_default_config(config_file)
+        print(f"Created default config file: {config_file}")
+
+    try:
+        with open(config_file) as f:
+            config = toml.load(f)
+
+        # Ensure all expected keys are present
+        for section, values in DEFAULT_CONFIG.items():
+            if section not in config:
+                config[section] = {}
+            for key, value in values.items():
+                if key not in config[section]:
+                    config[section][key] = value
+                    print(f"Added missing config value: {section}.{key} = {value}")
+
+        # If any values were added, update the file
+        if config != DEFAULT_CONFIG:
+            with open(config_file, "w") as f:
+                toml.dump(config, f)
+
+        return config
+    except Exception as e:
+        print(f"Error reading config file: {e}")
+        print("Using default configuration.")
+        return DEFAULT_CONFIG
 
 
 def already_running() -> bool:
@@ -48,51 +99,54 @@ def show_message_box(message: str, title: str) -> None:
     ctypes.windll.user32.MessageBoxW(0, message, title, 0)
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments."""
-    timeout_desc = f"Inactivity timeout in minutes (default: {INACTIVITY_TIMEOUT_MINUTES})"
-
+def parse_args(config: dict[str, Any]) -> argparse.Namespace:
+    """Parse command-line arguments, using config values as defaults."""
     parser = argparse.ArgumentParser(description="Set display resolution and refresh rate.")
     parser.add_argument(
-        "-w",
         "--width",
         type=int,
-        default=WIDTH,
+        default=config["display"]["width"],
         help="Width of the display resolution (default: 3840 for 4K)",
     )
     parser.add_argument(
-        "-ht",
         "--height",
         type=int,
-        default=HEIGHT,
+        default=config["display"]["height"],
         help="Height of the display resolution (default: 2160 for 4K)",
     )
     parser.add_argument(
-        "-r",
         "--refresh",
         type=int,
-        default=REFRESH_RATE,
+        default=config["display"]["refresh_rate"],
         help="Refresh rate of the display (default: 120 Hz)",
     )
     parser.add_argument(
-        "-b",
-        "--background",
-        action="store_true",
-        help="Run in background mode, monitoring for inactivity",
-    )
-    parser.add_argument(
-        "-t",
         "--timeout",
         type=int,
-        default=INACTIVITY_TIMEOUT_MINUTES,
-        help=timeout_desc,
+        default=config["input"]["timeout_minutes"],
+        help="Timeout in minutes for background mode",
     )
+    parser.add_argument(
+        "--retry-delay",
+        type=int,
+        default=config["input"]["retry_delay"],
+        help="Delay between retries in seconds",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=config["input"]["max_retries"],
+        help="Maximum number of retries",
+    )
+    parser.add_argument("--background", action="store_true", help="Run in background mode")
     return parser.parse_args()
 
 
-def run_background_mode(display: DisplaySettings, timeout: int) -> None:
+def run_background_mode(
+    display: DisplaySettings, timeout: int, retry_delay: int, max_retries: int
+) -> None:
     """Run the script in background mode, monitoring for inactivity to set display settings."""
-    monitor = InputMonitor(display, timeout)
+    monitor = InputMonitor(display, timeout, max_retries, retry_delay)
     try:
         monitor.start()
         print(
@@ -112,7 +166,8 @@ def main() -> None:
     Parse command-line arguments and instantiate DisplaySettings. Check to see if the current
     display settings match the desired settings. If not, set them.
     """
-    args = parse_args()
+    config = load_config()
+    args = parse_args(config)
 
     if args.background and already_running():
         show_message_box("An instance of this script is already running.", "4K120")
@@ -121,7 +176,7 @@ def main() -> None:
     display = DisplaySettings(args.width, args.height, args.refresh)
 
     if args.background:
-        run_background_mode(display, args.timeout)
+        run_background_mode(display, args.timeout, args.retry_delay, args.max_retries)
     elif not display.already_set_correctly():
         display.set_display_settings()
 

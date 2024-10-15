@@ -10,6 +10,7 @@ python = ">=3.12,<3.13"
 psutil = "^6.0.0"
 pynput = "^1.7.7"
 pywin32 = "^306"
+toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 pyinstaller = "^6.8.0"
