@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import win32api  # type: ignore
 import win32con  # type: ignore
 
 
 class DisplaySettings:
-    """
-    Class to store and manage display settings.
+    """Class to store and manage display settings.
 
     Attributes:
         width: The width of the display resolution. Default is 3840 for 4K.
@@ -20,8 +21,7 @@ class DisplaySettings:
         self.devmode = win32api.EnumDisplaySettings(None, win32con.ENUM_CURRENT_SETTINGS)
 
     def already_set_correctly(self) -> bool:
-        """
-        Check to see if the current display settings already match the desired settings. Returns
+        """Check to see if the current display settings already match the desired settings. Returns
         True if the display settings match the desired settings, False otherwise.
         """
         if (
@@ -36,8 +36,7 @@ class DisplaySettings:
         return False
 
     def set_display_settings(self) -> bool:
-        """
-        Set the display resolution and refresh rate for the primary display. Returns True if the
+        """Set the display resolution and refresh rate for the primary display. Returns True if the
         display settings were set successfully, False otherwise.
         """
         self.devmode.PelsWidth = self.width

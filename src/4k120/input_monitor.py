@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import threading
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pynput import keyboard, mouse
 
-from display_settings import DisplaySettings
+if TYPE_CHECKING:
+    from .display_settings import DisplaySettings
 
 
 class InputMonitor:

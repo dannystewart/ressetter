@@ -9,15 +9,16 @@ import os
 import sys
 import tempfile
 import time
+from pathlib import Path
 from typing import Any
 
 import psutil
 import toml
 
-from display_settings import DisplaySettings
-from input_monitor import InputMonitor
+from .display_settings import DisplaySettings
+from .input_monitor import InputMonitor
 
-DEFAULT_CONFIG = {
+DEFAULT_CONFIG: dict[str, int] = {
     "display": {
         "width": 3840,
         "height": 2160,
@@ -32,10 +33,10 @@ DEFAULT_CONFIG = {
 }
 
 
-def create_default_config(config_file: str) -> None:
+def create_default_config(config_file: Path) -> None:
     """Create a default configuration file."""
     try:
-        with open(config_file, "w") as f:
+        with config_file.open("w") as f:
             toml.dump(DEFAULT_CONFIG, f)
     except Exception as e:
         print(f"Error creating default config file: {e}")
@@ -43,12 +44,14 @@ def create_default_config(config_file: str) -> None:
 
 def load_config(config_file: str = "config.toml") -> dict[str, Any]:
     """Load configuration from TOML file. Create default file if it doesn't exist."""
-    if not os.path.exists(config_file):
-        create_default_config(config_file)
+    config_path = Path(config_file)
+
+    if not config_path.exists():
+        create_default_config(config_path)
         print(f"Created default config file: {config_file}")
 
     try:
-        with open(config_file) as f:
+        with config_path.open() as f:
             config = toml.load(f)
 
         # Ensure all expected keys are present
@@ -62,7 +65,7 @@ def load_config(config_file: str = "config.toml") -> dict[str, Any]:
 
         # If any values were added, update the file
         if config != DEFAULT_CONFIG:
-            with open(config_file, "w") as f:
+            with config_path.open("w") as f:
                 toml.dump(config, f)
 
         return config
@@ -74,21 +77,21 @@ def load_config(config_file: str = "config.toml") -> dict[str, Any]:
 
 def already_running() -> bool:
     """Check if the script is already running using a file-based lock."""
-    lock_file = os.path.join(tempfile.gettempdir(), "DisplaySettingsScript.lock")
+    lock_file = Path(tempfile.gettempdir()) / "DisplaySettingsScript.lock"
     try:
         # Check if the process with the stored PID is still running
-        if os.path.exists(lock_file):
-            with open(lock_file) as f:
+        if lock_file.exists():
+            with lock_file.open() as f:
                 pid = int(f.read().strip())
             if psutil.pid_exists(pid):
                 return True  # Process is still running
 
         # Create new lock file with our PID
-        with open(lock_file, "w") as f:
+        with lock_file.open("w") as f:
             f.write(str(os.getpid()))
 
         # Register function to remove lock file on script exit
-        atexit.register(lambda: os.remove(lock_file) if os.path.exists(lock_file) else None)
+        atexit.register(lambda: lock_file.unlink(missing_ok=True))
         return False
     except Exception as e:
         print(f"Error checking/creating lock file: {e}")
