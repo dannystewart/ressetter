@@ -359,6 +359,7 @@ description = "Python for Window Extensions"
 optional = false
 python-versions = "*"
 groups = ["main"]
+markers = "platform_system == \"Windows\""
 files = [
     {file = "pywin32-309-cp310-cp310-win32.whl", hash = "sha256:5b78d98550ca093a6fe7ab6d71733fbc886e2af9d4876d935e7f6e1cd6577ac9"},
     {file = "pywin32-309-cp310-cp310-win_amd64.whl", hash = "sha256:728d08046f3d65b90d4c77f71b6fbb551699e2005cc31bbffd1febd6a08aa698"},
@@ -475,4 +476,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14"
-content-hash = "7139ffea2264319e8d12e057ed34d1ad7b995ea92b16eaef438eecd57f93f47e"
+content-hash = "ed87ee38e3f2266bb2e10e6fe9c6f95c58651d430d9bea428b8e6079ad5026a0"

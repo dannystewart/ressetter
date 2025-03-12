@@ -1,13 +1,13 @@
-# -*- mode: python ; coding: utf-8 -*-
+from __future__ import annotations
 
 import sys
 
 a = Analysis(
-    ["4k120.py"],
+    ["src/py4k120/main.py"],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['psutil'],
+    hiddenimports=["psutil"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -17,7 +17,7 @@ a = Analysis(
 pyz = PYZ(a.pure)
 
 # Check if --background or -b is in sys.argv
-background_mode = any(arg in sys.argv for arg in ['--background', '-b'])
+background_mode = any(arg in sys.argv for arg in ["--background", "-b"])
 
 exe = EXE(
     pyz,
