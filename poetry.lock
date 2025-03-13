@@ -140,7 +140,7 @@ files = [
 
 [[package]]
 name = "dsutil"
-version = "1.10.3"
+version = "1.10.4"
 description = "Personal Python utility library"
 optional = false
 python-versions = ">=3.12"
@@ -169,7 +169,7 @@ dev = ["mypy (>=1.15.0)", "ruff (>=0.9.10)"]
 type = "git"
 url = "https://gitlab.dannystewart.com/danny/dsutil.git"
 reference = "HEAD"
-resolved_reference = "71929d141f35da8607ed57272f8dedd2d969cac2"
+resolved_reference = "ac93c3f751747153d2205b2bf1ae9038ea4de851"
 
 [[package]]
 name = "evdev"
@@ -887,4 +887,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14"
-content-hash = "cfd25a477bf60ddc0497091182dfc0a5e4872162d77310973ab429c12d020fd2"
+content-hash = "d2aa085a5809b398d8fde571fb0abe73bfece33716f7a11f0a2443926e305d07"
