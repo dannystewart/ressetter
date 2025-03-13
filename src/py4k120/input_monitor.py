@@ -2,35 +2,41 @@ from __future__ import annotations
 
 import threading
 import time
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from pynput import keyboard, mouse
 
+from dsutil import LocalLogger
+
 if TYPE_CHECKING:
+    from logging import Logger
+
     from py4k120.display_settings import DisplaySettings
 
 
+@dataclass
 class InputMonitor:
     """Monitor for keyboard and mouse input to set display settings after a period of inactivity."""
 
-    def __init__(
-        self,
-        display_settings: DisplaySettings,
-        timeout: int,
-        set_delay: int,
-        retry_delay: int,
-        max_retries: int,
-    ):
-        self.display_settings = display_settings
-        self.timeout = timeout  # Timeout in seconds
-        self.set_delay = set_delay  # Delay before setting display settings in seconds
-        self.retry_delay = retry_delay  # Delay between retries in seconds
-        self.max_retries = max_retries  # Maximum number of retries to set display settings
+    display_settings: DisplaySettings
+    timeout: int  # Timeout in seconds
+    set_delay: int  # Delay before setting display settings in seconds
+    retry_delay: int  # Delay between retries in seconds
+    max_retries: int  # Maximum number of retries to set display settings
 
-        self.last_activity_time = time.time()
-        self.timer: threading.Timer | None = None
+    keyboard_listener: keyboard.Listener = field(init=False)
+    mouse_listener: mouse.Listener = field(init=False)
+
+    timer: threading.Timer | None = None
+    last_activity_time: float = field(default_factory=time.time)
+
+    logger: Logger = field(init=False)
+
+    def __post_init__(self):
         self.keyboard_listener = keyboard.Listener(on_press=self.on_activity)
         self.mouse_listener = mouse.Listener(on_move=self.on_activity, on_click=self.on_activity)
+        self.logger = LocalLogger().get_logger()
 
     def start(self) -> None:
         """Start monitoring for keyboard and mouse input."""
@@ -62,21 +68,25 @@ class InputMonitor:
 
     def on_inactivity(self) -> None:
         """Print a message when inactivity is detected."""
-        print("Inactivity detected. Waiting for next input to set display settings.")
+        self.logger.debug("Inactivity detected. Waiting for next input to set display settings.")
 
     def attempt_display_settings_change(self) -> None:
         """Attempt to change display settings with retries."""
         for attempt in range(self.max_retries):
-            if self.display_settings.already_set_correctly():
-                print("Display settings are already correct.")
+            if self.display_settings.already_set_correctly:
+                self.logger.info("Display settings are already correct.")
                 return
 
             if self.display_settings.set_display_settings():
-                print(f"Display settings changed successfully on attempt {attempt + 1}.")
+                self.logger.info(
+                    "Display settings changed successfully on attempt %s.", attempt + 1
+                )
                 return
 
             if attempt < self.max_retries - 1:
-                print(f"Retrying in {self.retry_delay} seconds...")
+                self.logger.warning(
+                    "Failed to change display settings. Retrying in %s seconds.", self.retry_delay
+                )
                 time.sleep(self.retry_delay)
 
-        print(f"Failed to change display settings after {self.max_retries} attempts.")
+        self.logger.error("Failed to change display settings after %s attempts.", self.max_retries)

@@ -1,12 +1,13 @@
 [project]
 name = "py4k120"
-version = "0.3.0"
+version = "0.4.0"
 description = "Set resolution and refresh rate to 4K @ 120Hz"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 packages = [{ include = "py4k120", from = "src" }]
 dependencies = [
+    "dsutil @ git+https://gitlab.dannystewart.com/danny/dsutil.git",
     "psutil (>=7.0.0)",
     "pynput (>=1.8.0)",
     "pywin32 (>=309); platform_system == 'Windows'",
