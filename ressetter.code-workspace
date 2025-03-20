@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": false,
+			"**/.hg": false,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true,
+			".history": true,
+			"**/__pycache__": true,
+			"**/.pytest_cache": true,
+			"**/.vscode": true,
+			"**/CVS": false,
+			"**/node_modules": true,
+			"env*": true,
+			"venv": true,
+			"**/.mypy_cache": true
+		},
+		"explorerExclude.backup": {}
+	}
+}
