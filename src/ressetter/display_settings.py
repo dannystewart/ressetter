@@ -11,7 +11,7 @@ from dsbase.log import LocalLogger
 if TYPE_CHECKING:
     from logging import Logger
 
-    import win32typing
+    import win32typing  # type: ignore
 
 
 @dataclass
