@@ -4,36 +4,36 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import toml
 
-from dsbase import LocalLogger
-
-logger = LocalLogger().get_logger()
-
-# Default configuration values
-DEFAULT_CONFIG = {
-    "display": {
-        "width": 3840,
-        "height": 2160,
-        "refresh_rate": 120,
-    },
-    "background": {
-        "timeout": 300,
-        "set_delay": 5,
-        "retry_delay": 10,
-        "max_retries": 3,
-    },
-}
+from dsbase import LocalLogger, PathKeeper
 
 
 class Config:
     """Configuration manager for ResSetter."""
 
+    # Default configuration values
+    DEFAULT_CONFIG: ClassVar[dict[str, Any]] = {
+        "display": {
+            "width": 3840,
+            "height": 2160,
+            "refresh_rate": 120,
+        },
+        "background": {
+            "timeout": 300,
+            "set_delay": 5,
+            "retry_delay": 10,
+            "max_retries": 3,
+        },
+    }
+
     def __init__(self) -> None:
         """Initialize the config manager."""
-        self.config_data = DEFAULT_CONFIG.copy()
+        self.logger = LocalLogger().get_logger()
+        self.paths = PathKeeper("ressetter")
+        self.config_data = self.DEFAULT_CONFIG.copy()
         self.load_config()
 
     def load_config(self) -> None:
@@ -55,13 +55,13 @@ class Config:
             if config_path.exists():
                 try:
                     loaded_config = toml.load(config_path)
-                    logger.info("Loaded configuration from %s", config_path)
+                    self.logger.info("Loaded configuration from %s", config_path)
                     self._update_config(loaded_config)
                     return
                 except Exception as e:
-                    logger.error("Error loading config from %s: %s", config_path, str(e))
+                    self.logger.error("Error loading config from %s: %s", config_path, str(e))
 
-        logger.info("No configuration file found. Using default values.")
+        self.logger.info("No configuration file found. Using default values.")
 
     def _update_config(self, loaded_config: dict[str, Any]) -> None:
         """Update configuration with loaded values."""
