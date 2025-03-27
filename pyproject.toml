@@ -1,7 +1,7 @@
 [project]
 name = "ressetter"
 version = "0.1.1"
-description = "Set resolution and refresh rate"
+description = "Auto-set resolution and refresh rate on Windows"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
