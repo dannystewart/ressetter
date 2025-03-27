@@ -1,6 +1,6 @@
 [project]
 name = "ressetter"
-version = "0.1.1"
+version = "0.1.1.post1"
 description = "Auto-set resolution and refresh rate on Windows"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
 readme = "README.md"
