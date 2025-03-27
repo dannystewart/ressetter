@@ -5,8 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from dsbase.log import LocalLogger
-from dsbase.util import ArgParser
+from dsbase import ArgParser, LocalLogger
 
 from ressetter import DisplaySettings, ResSetter
 from ressetter.config import config

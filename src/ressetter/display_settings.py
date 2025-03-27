@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import win32api  # type: ignore
 import win32con  # type: ignore
 
-from dsbase.log import LocalLogger
+from dsbase import LocalLogger
 
 if TYPE_CHECKING:
     from logging import Logger

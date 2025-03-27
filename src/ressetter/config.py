@@ -8,7 +8,7 @@ from typing import Any
 
 import toml
 
-from dsbase.log import LocalLogger
+from dsbase import LocalLogger
 
 logger = LocalLogger().get_logger()
 

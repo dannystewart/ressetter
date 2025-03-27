@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 
 import psutil
 
-from dsbase.log import LocalLogger
+from dsbase import LocalLogger
 
 from ressetter import DisplaySettings, InputMonitor
 
