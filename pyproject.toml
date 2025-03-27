@@ -1,6 +1,6 @@
 [project]
 name = "ressetter"
-version = "0.1.0"
+version = "0.1.1"
 description = "Set resolution and refresh rate"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
 readme = "README.md"
