@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any, ClassVar
 
 import toml
 
-from dsbase import LocalLogger, PathKeeper
+from dsbase import EnvManager, LocalLogger, PathKeeper
 
 
 class Config:
@@ -33,6 +32,8 @@ class Config:
         """Initialize the config manager."""
         self.logger = LocalLogger().get_logger()
         self.paths = PathKeeper("ressetter")
+        self.env = EnvManager()
+        self.env.add_var("RESSETTER_CONFIG", description="Path to the configuration file")
         self.config_data = self.DEFAULT_CONFIG.copy()
         self.load_config()
 
@@ -42,13 +43,11 @@ class Config:
             # Current directory
             Path("config.toml"),
             # User's home directory
-            Path.home() / ".config" / "ressetter" / "config.toml",
-            # System-wide configuration
-            Path("/etc/ressetter/config.toml"),
+            self.paths.from_config("config.toml"),
         ]
 
         # Add config path from environment variable if set
-        if config_env := os.environ.get("RESSETTER_CONFIG"):
+        if config_env := self.env.ressetter_config:
             config_paths.insert(0, Path(config_env))
 
         for config_path in config_paths:
