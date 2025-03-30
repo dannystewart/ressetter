@@ -3,7 +3,10 @@ name = "ressetter"
 version = "0.1.1.post1"
 description = "Auto-set resolution and refresh rate on Windows"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
+urls = { repository = "https://github.com/dannystewart/ressetter" }
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "dsbase (>=0.4.1,<0.5.0)",
