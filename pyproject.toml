@@ -1,6 +1,6 @@
 [project]
 name = "ressetter"
-version = "0.2.0"
+version = "0.2.1.dev"
 description = "Auto-set resolution and refresh rate on Windows"
 authors = [{ name = "Danny Stewart", email = "danny@stewart.cc" }]
 urls = { repository = "https://github.com/dannystewart/ressetter" }
