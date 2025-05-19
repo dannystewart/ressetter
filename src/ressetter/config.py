@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import toml
-
-from dsbase import EnvManager, LocalLogger, PathKeeper
+from polykit import PolyLog
+from polykit.env import PolyEnv
+from polykit.paths import PolyPath
 
 
 class Config:
@@ -30,9 +31,9 @@ class Config:
 
     def __init__(self) -> None:
         """Initialize the config manager."""
-        self.logger = LocalLogger().get_logger()
-        self.paths = PathKeeper("ressetter")
-        self.env = EnvManager()
+        self.logger = PolyLog().get_logger()
+        self.paths = PolyPath("ressetter")
+        self.env = PolyEnv()
         self.env.add_var("RESSETTER_CONFIG", description="Path to the configuration file")
         self.config_data = self.DEFAULT_CONFIG.copy()
         self.load_config()

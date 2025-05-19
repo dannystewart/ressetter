@@ -5,12 +5,13 @@ from __future__ import annotations
 import argparse
 import sys
 
-from dsbase import ArgParser, LocalLogger
+from polykit import PolyLog
+from polykit.cli import PolyArgs
 
 from ressetter import DisplaySettings, ResSetter
 from ressetter.config import config
 
-logger = LocalLogger().get_logger()
+logger = PolyLog().get_logger()
 
 
 def parse_args() -> argparse.Namespace:
@@ -64,7 +65,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """Set the display settings if needed, or run in background mode."""
-    parser = ArgParser(description=__doc__, arg_width=24, max_width=120)
+    parser = PolyArgs(description=__doc__, arg_width=24, max_width=120)
     args = parser.parse_args()
 
     display = DisplaySettings(args.width, args.height, args.refresh)

@@ -5,9 +5,8 @@ import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
+from polykit import PolyLog
 from pynput import keyboard, mouse
-
-from dsbase import LocalLogger
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -36,7 +35,7 @@ class InputMonitor:
     def __post_init__(self):
         self.keyboard_listener = keyboard.Listener(on_press=self.on_activity)
         self.mouse_listener = mouse.Listener(on_move=self.on_activity, on_click=self.on_activity)
-        self.logger = LocalLogger().get_logger()
+        self.logger = PolyLog().get_logger()
 
     def start(self) -> None:
         """Start monitoring for keyboard and mouse input."""

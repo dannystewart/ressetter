@@ -12,8 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import psutil
-
-from dsbase import LocalLogger
+from polykit import PolyLog
 
 from ressetter import DisplaySettings, InputMonitor
 
@@ -34,7 +33,7 @@ class ResSetter:
     logger: Logger = field(init=False)
 
     def __post_init__(self) -> None:
-        self.logger = LocalLogger().get_logger()
+        self.logger = PolyLog().get_logger()
         self.monitor = InputMonitor(
             self.display, self.timeout, self.set_delay, self.retry_delay, self.max_retries
         )

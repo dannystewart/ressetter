@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING
 
 import win32api  # type: ignore
 import win32con  # type: ignore
-
-from dsbase import LocalLogger
+from polykit import PolyLog
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -26,7 +25,7 @@ class DisplaySettings:
 
     def __post_init__(self):
         self.devmode = win32api.EnumDisplaySettings(None, win32con.ENUM_CURRENT_SETTINGS)
-        self.logger = LocalLogger().get_logger()
+        self.logger = PolyLog().get_logger()
 
     def set_display_settings(self) -> bool:
         """Set the display resolution and refresh rate for the primary display.
