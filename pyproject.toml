@@ -9,7 +9,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "polykit (>=0.11.1,<0.12.0)",
+    "polykit (>=0.11.4,<0.12.0)",
     "psutil (>=7.0.0)",
     "pynput (>=1.8.1)",
     "pywin32 (>=310) ; platform_system == \"Windows\"",
@@ -18,8 +18,8 @@ dependencies = [
 
 [tool.poetry.group.dev.dependencies]
 pyinstaller = ">=6.14.1"
-mypy = ">=1.16.0"
-ruff = ">=0.11.13"
+mypy = ">=1.16.1"
+ruff = ">=0.12.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
