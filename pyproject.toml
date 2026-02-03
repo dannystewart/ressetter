@@ -7,7 +7,7 @@ urls = { repository = "https://github.com/dannystewart/ressetter" }
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.12,<3.14"
+requires-python = ">=3.12,<3.15"
 dependencies = [
     "polykit (>=0.14.6,<0.15.0)",
     "psutil (>=7.1.3)",
